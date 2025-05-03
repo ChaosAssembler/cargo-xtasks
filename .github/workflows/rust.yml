@@ -1,0 +1,42 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: taiki-e/install-action@cargo-hack
+    - uses: taiki-e/install-action@cargo-udeps
+    - name: Generate Lockfile with minimal Dependency Versions
+      run: cargo +nightly update -Zdirect-minimal-versions
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2.7.8
+    - name: Cargo Clippy
+      run:
+        cargo +nightly hack clippy
+            --bins --examples --tests --benches --workspace
+            --feature-powerset --optional-deps
+            -- -Dwarnings
+    - name: Cargo udeps
+      run:
+        cargo +nightly hack udeps
+          --bins --examples --workspace
+          --feature-powerset --optional-deps
+    - name: Cargo udeps Dev-Deps
+      run:
+        cargo +nightly hack udeps
+          --bins --examples --tests --benches --workspace
+          --feature-powerset --optional-deps
+    - name: Run tests
+      run: cargo +nightly test --workspace --all-features --verbose --locked

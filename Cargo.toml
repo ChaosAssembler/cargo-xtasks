@@ -1,0 +1,13 @@
+[package]
+name = "cargo-xtasks"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.98"
+argh = { version = "0.1.13", optional = true }
+cargo-run-bin = { version = "1.7.4", optional = true }
+
+[features]
+cargo-run-bin = ["dep:cargo-run-bin"]
+argh = ["dep:argh"]

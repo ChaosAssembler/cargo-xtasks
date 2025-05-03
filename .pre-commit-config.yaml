@@ -1,0 +1,66 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.17.2
+    hooks:
+    - id: markdownlint-cli2
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: Rustfmt
+        language: rust
+        entry: rustfmt --edition 2024 --unstable-features --style-edition 2024
+        files: \.rs$
+      - id: cargo-hack-clippy-fix
+        name: "Cargo Hack Clippy"
+        language: rust
+        additional_dependencies:
+          - cli:cargo-hack
+        entry:
+          cargo hack clippy --fix --allow-staged --edition-idioms
+            --bins --examples --tests --benches --workspace
+            --feature-powerset --optional-deps
+            -- -Dwarnings
+        pass_filenames: false
+        files: ^(.*\.rs|Cargo\.(toml|lock))$
+      - id: cargo-udeps
+        name: Cargo udeps
+        language: rust
+        additional_dependencies:
+          - cli:cargo-udeps
+          - cli:cargo-hack
+        entry:
+          cargo hack udeps
+            --bins --examples --workspace
+            --feature-powerset --optional-deps
+        pass_filenames: false
+        files: ^(.*\.rs|Cargo\.(toml|lock))$
+      - id: cargo-udeps-dev
+        name: Cargo udeps Dev-Deps
+        language: rust
+        additional_dependencies:
+          - cli:cargo-udeps
+          - cli:cargo-hack
+        entry:
+          cargo hack udeps
+            --bins --examples --tests --benches --workspace
+            --feature-powerset --optional-deps
+        pass_filenames: false
+        files: ^(.*\.rs|Cargo\.(toml|lock))$
+      - id: cargo-hack-test
+        name: "Cargo Hack Test"
+        language: rust
+        additional_dependencies:
+          - cli:cargo-hack
+        entry:
+          cargo hack test --workspace --feature-powerset --optional-deps
+        pass_filenames: false
+        files: ^(.*\.rs|Cargo\.(toml|lock))$
