@@ -33,12 +33,12 @@ jobs:
     - name: Cargo udeps
       run:
         cargo +nightly hack udeps
-          --bins --examples --workspace
+          --lib --bins --examples --workspace
           --feature-powerset --optional-deps
     - name: Cargo udeps Dev-Deps
       run:
         cargo +nightly hack udeps
-          --bins --examples --tests --benches --workspace
+          --tests --benches --workspace
           --feature-powerset --optional-deps
     - name: Run tests
       run: cargo +nightly test --workspace --all-features --verbose --locked

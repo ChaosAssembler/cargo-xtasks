@@ -39,7 +39,7 @@ repos:
           - cli:cargo-hack
         entry:
           cargo hack udeps
-            --bins --examples --workspace
+            --lib --bins --examples --workspace
             --feature-powerset --optional-deps
         pass_filenames: false
         files: ^(.*\.rs|Cargo\.(toml|lock))$
@@ -51,7 +51,7 @@ repos:
           - cli:cargo-hack
         entry:
           cargo hack udeps
-            --bins --examples --tests --benches --workspace
+            --tests --benches --workspace
             --feature-powerset --optional-deps
         pass_filenames: false
         files: ^(.*\.rs|Cargo\.(toml|lock))$
