@@ -11,8 +11,11 @@ cargo_toml = { version = "0.22.1", optional = true }
 serde = { version = "1.0.219", optional = true, features = ["derive"] }
 serde_json = { version = "1.0.140", optional = true }
 wasm-bindgen-cli-support = { version = "0.2.100", optional = true }
+webbrowser = { version = "1.0.4", optional = true }
 
 [features]
 cargo-run-bin = ["dep:cargo-run-bin"]
 argh = ["dep:argh"]
 build-web = [ "dep:serde", "dep:cargo_toml", "dep:serde_json", "dep:wasm-bindgen-cli-support"]
+run-web = ["cargo-run-bin", "build-web"]
+webbrowser = ["dep:webbrowser", "run-web"]

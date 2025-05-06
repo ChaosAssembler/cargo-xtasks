@@ -1,6 +1,6 @@
 #![cfg(feature = "build-web")]
 
-use std::{env, fs, path::Path, process::Command};
+use std::{fs, path::Path, process::Command};
 
 use anyhow::Context;
 use cargo_toml::Manifest;
@@ -14,6 +14,7 @@ const STATIC_WEB_FILE_EXTENSIONS: &[&str] = &["html"];
 #[derive(Debug)]
 #[cfg_attr(feature = "argh", derive(argh::FromArgs))]
 #[cfg_attr(feature = "argh", argh(subcommand, name = "build-web"))]
+#[non_exhaustive]
 pub struct BuildWeb {
     /// build in release mode
     #[cfg_attr(feature = "argh", argh(switch))]
@@ -21,11 +22,8 @@ pub struct BuildWeb {
 }
 impl BuildWeb {
     pub(crate) fn run(self) -> anyhow::Result<()> {
-        let cargo_var = env::var_os("CARGO");
-        let cargo_path = cargo_var.as_deref().unwrap_or("cargo".as_ref());
-
         // CARGO_MANIFEST_PATH can't be used here, since it always contains the path of the xtask manifest
-        let manifest_path = Command::new(cargo_path)
+        let manifest_path = Command::new_cargo()
             .args(["locate-project", "--message-format", "plain"])
             .string_output()?;
         let manifest_path = Path::new(
@@ -46,7 +44,7 @@ impl BuildWeb {
         let bin_name = package.default_run.unwrap_or(package.name);
 
         let cargo_metadata: CargoMetadata = serde_json::from_slice(
-            &Command::new(cargo_path)
+            &Command::new_cargo()
                 .args([
                     "metadata",
                     "--no-deps",
@@ -60,7 +58,7 @@ impl BuildWeb {
         )?;
         let target_dir = Path::new(&*cargo_metadata.target_directory);
 
-        let mut build_cmd = Command::new(cargo_path);
+        let mut build_cmd = Command::new_cargo();
         build_cmd.args([
             "build",
             "--target",
