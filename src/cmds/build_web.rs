@@ -84,6 +84,7 @@ impl BuildWeb {
             .input_path(bin_path)
             .web(true)?
             .typescript(false)
+            .keep_debug(!self.release)
             .out_name(&bin_name)
             .generate(&target_web_path)?;
 
