@@ -1,6 +1,6 @@
 #![cfg(feature = "build-web")]
 
-use std::{fs, path::Path, process::Command};
+use std::{fs, io, path::Path, process::Command};
 
 use anyhow::Context;
 use cargo_toml::Manifest;
@@ -78,7 +78,10 @@ impl BuildWeb {
             .with_extension("wasm");
         let target_web_path = target_dir.join("web");
 
-        fs::remove_dir_all(&target_web_path)?;
+        fs::remove_dir_all(&target_web_path).or_else(|err| match err.kind() {
+            io::ErrorKind::NotFound => Ok(()),
+            _ => Err(err),
+        })?;
 
         Bindgen::new()
             .input_path(bin_path)
