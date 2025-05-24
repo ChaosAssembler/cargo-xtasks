@@ -1,12 +1,12 @@
-#[cfg(feature = "cargo-run-bin")]
-pub use cmds::bin;
 #[cfg(feature = "build-web")]
 pub use cmds::build_web;
 #[cfg(feature = "run-web")]
 pub use cmds::run_web;
+#[cfg(feature = "cargo-run-bin")]
+pub use cmds::{bin, cbin};
 
 #[cfg(feature = "cargo-run-bin")]
-use bin::BinCmd;
+use self::{bin::BinCmd, cbin::CBinCmd};
 #[cfg(feature = "build-web")]
 use build_web::BuildWeb;
 #[cfg(feature = "run-web")]
@@ -24,6 +24,8 @@ mod fs;
 pub enum SubCmd {
     #[cfg(feature = "cargo-run-bin")]
     Bin(BinCmd),
+    #[cfg(feature = "cargo-run-bin")]
+    CBin(CBinCmd),
     #[cfg(feature = "build-web")]
     BuildWeb(BuildWeb),
     #[cfg(feature = "run-web")]
@@ -47,6 +49,8 @@ pub fn run_with_args(args: Cli) -> anyhow::Result<()> {
     match args.cmd {
         #[cfg(feature = "cargo-run-bin")]
         SubCmd::Bin(bincmd) => bincmd.run(),
+        #[cfg(feature = "cargo-run-bin")]
+        SubCmd::CBin(cbincmd) => cbincmd.run(),
         #[cfg(feature = "build-web")]
         SubCmd::BuildWeb(build_web_cmd) => build_web_cmd.run(),
         #[cfg(feature = "run-web")]
