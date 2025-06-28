@@ -23,7 +23,7 @@ jobs:
     - name: Generate Lockfile with minimal Dependency Versions
       run: cargo +nightly update -Zdirect-minimal-versions
     - name: Rust Cache
-      uses: Swatinem/rust-cache@v2.7.8
+      uses: Swatinem/rust-cache@v2.8.0
     - name: Cargo Clippy
       run:
         cargo +nightly hack clippy
